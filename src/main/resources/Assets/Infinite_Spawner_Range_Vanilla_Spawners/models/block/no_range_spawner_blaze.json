@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "infinite_spawner_range_vanilla_spawners:block/Spawner_face_blaze"
+  }
+}

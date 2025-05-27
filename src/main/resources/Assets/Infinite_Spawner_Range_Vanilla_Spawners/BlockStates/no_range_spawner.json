@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "type=vanilla":  { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_vanilla" },
+    "type=zombie":   { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_zombie" },
+    "type=skeleton": { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_skeleton" },
+    "type=blaze":    { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_blaze" },
+    "type=creeper":  { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_creeper" },
+    "type=enderman": { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_enderman" },
+    "type=spider":   { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_spider" },
+    "type=none":     { "model": "infinite_spawner_range_vanilla_spawners:block/no_range_spawner_none" }
+  }
+}
