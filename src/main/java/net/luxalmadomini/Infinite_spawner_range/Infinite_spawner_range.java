@@ -6,12 +6,14 @@ import net.luxalmadomini.Infinite_spawner_range.Init.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +34,9 @@ import net.minecraft.core.BlockPos;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.luxalmadomini.Infinite_spawner_range.Blocks.NoRangeSpawnerBlock;
 
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -78,19 +83,55 @@ public class Infinite_spawner_range {
     @SubscribeEvent
     public void onSpawnerRightClick(PlayerInteractEvent.RightClickBlock event) {
         if (event.getLevel().isClientSide()) return;
-        if ( event.getItemStack().getItem() != Items.EMERALD_BLOCK) return;
+        if (event.getItemStack().getItem() != Items.NETHER_STAR) return;
 
         BlockPos pos = event.getPos();
         ServerLevel level = (ServerLevel) event.getLevel();
-        if (!(level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) return;
+        BlockEntity be = level.getBlockEntity(pos);
 
+        if (!(be instanceof SpawnerBlockEntity)) return;
+
+        event.setUseBlock(Event.Result.DENY);
+        LOGGER.info("Event place block canceled");
+        event.setCanceled(true);
+        LOGGER.info("Event canceled");
+
+        // Remove 1 emerald block from player
         event.getEntity().getItemInHand(event.getHand()).shrink(1);
 
-        spawner.getPersistentData().putBoolean("IgnorePlayerRange", true);
-        spawner.setChanged();
+        // Remove the original spawner
+        //level.removeBlock(pos, false);
 
-        trackedSpawners.add(pos);
-        event.setCanceled(true);
+        SpawnerBlockEntity spawner = (SpawnerBlockEntity) be;
+        CompoundTag spawnerTag = spawner.saveWithFullMetadata();
+        String entityId = "minecraft:zombie"; // default fallback
+
+        if (spawnerTag.contains("SpawnData", Tag.TAG_COMPOUND)) {
+            LOGGER.info("Spawner has SpawnData tag");
+            CompoundTag spawnData = spawnerTag.getCompound("SpawnData");
+            if (spawnData.contains("id", Tag.TAG_STRING)) {
+                entityId = spawnData.getString("id");
+            }
+        }
+
+        // Map entityId to your SpawnerType enum
+        NoRangeSpawnerBlock.SpawnerType type = switch (entityId) {
+            case "minecraft:zombie" -> NoRangeSpawnerBlock.SpawnerType.ZOMBIE;
+            case "minecraft:skeleton" -> NoRangeSpawnerBlock.SpawnerType.SKELETON;
+            case "minecraft:blaze" -> NoRangeSpawnerBlock.SpawnerType.BLAZE;
+            case "minecraft:creeper" -> NoRangeSpawnerBlock.SpawnerType.CREEPER;
+            case "minecraft:enderman" -> NoRangeSpawnerBlock.SpawnerType.ENDERMAN;
+            case "minecraft:spider" -> NoRangeSpawnerBlock.SpawnerType.SPIDER;
+            default -> NoRangeSpawnerBlock.SpawnerType.VANILLA;
+        };
+
+        BlockState newState = ModBlocks.NO_RANGE_SPAWNER.get()
+                .defaultBlockState()
+                .setValue(NoRangeSpawnerBlock.TYPE, type);
+
+        level.setBlock(pos, newState, 3);
+
+
     }
 
     @SubscribeEvent

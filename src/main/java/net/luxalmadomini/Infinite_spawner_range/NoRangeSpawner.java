@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.phys.AABB;
+import java.util.Random;
 
 public  class NoRangeSpawner {
     private final CompoundTag entityTag;
@@ -18,8 +19,7 @@ public  class NoRangeSpawner {
     }
 
     public void serverTick(ServerLevel level, BlockPos pos){
-
-
+        Random random = new Random();
         double halfRange = 25.0;
 
         AABB box = new AABB(
@@ -33,19 +33,23 @@ public  class NoRangeSpawner {
                 mob -> mob instanceof net.minecraft.world.entity.monster.Enemy
         ).size();
 
-        if (hostileCount <= 100){
-            Entity entity = EntityType.loadEntityRecursive(entityTag, level, e -> e);
-            if (entity != null){
-                entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.random.nextFloat() * 360.0F, 0.0F);
-                if (entity instanceof Mob mob) {
-                    mob.spawnAnim();
+        if (random.nextInt(100) > 50) {
+            if (hostileCount <= 100) {
+                for (int i = 0; i <= random.nextInt(4); i++) {
+                    Entity entity = EntityType.loadEntityRecursive(entityTag, level, e -> e);
+                    if (entity != null) {
+                        entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.random.nextFloat() * 360.0F, 0.0F);
+                        if (entity instanceof Mob mob) {
+                            mob.spawnAnim();
 
+                        }
+                        level.tryAddFreshEntityWithPassengers(entity);
+                        level.levelEvent(2004, pos, 0);
+                        level.gameEvent(entity, net.minecraft.world.level.gameevent.GameEvent.ENTITY_PLACE, pos);
+                    }
                 }
-                level.tryAddFreshEntityWithPassengers(entity);
-                level.levelEvent(2004, pos, 0);
-                level.gameEvent(entity, net.minecraft.world.level.gameevent.GameEvent.ENTITY_PLACE, pos);
-            }
 
+            }
         }
 
 

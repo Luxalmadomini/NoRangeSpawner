@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,15 @@ public class NoRangeSpawnerBlock extends Block implements EntityBlock {
 
     public NoRangeSpawnerBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(TYPE, SpawnerType.VANILLA));
     }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+
+        builder.add(TYPE);
+    }
+
 
     @Nullable
     @Override
@@ -29,7 +38,7 @@ public class NoRangeSpawnerBlock extends Block implements EntityBlock {
     }
 
     public enum SpawnerType implements StringRepresentable{
-        VANILLA, ZOMBIE, SKELETON, BLAZE, CREEPER, ENDERMAN;
+        VANILLA, ZOMBIE, SKELETON, BLAZE, CREEPER, ENDERMAN, SPIDER;
 
         @Override
         public String getSerializedName() {
