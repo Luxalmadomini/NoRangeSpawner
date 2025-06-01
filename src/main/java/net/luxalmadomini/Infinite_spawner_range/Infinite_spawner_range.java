@@ -22,10 +22,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
@@ -62,6 +60,8 @@ public class Infinite_spawner_range {
         ModBlockEntities.register(modEventBus);
 
         ModBlocks.register(modEventBus);
+
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.NO_RANGE_SPAWNER.get(), RenderType.cutout());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -133,6 +133,9 @@ public class Infinite_spawner_range {
 
 
     }
+
+
+
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.LevelTickEvent event){

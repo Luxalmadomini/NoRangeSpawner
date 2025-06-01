@@ -5,6 +5,7 @@ import net.luxalmadomini.Infinite_spawner_range.NoRangeSpawner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -44,6 +45,16 @@ public class NoRangeSpawnerBlock extends Block implements EntityBlock {
         public String getSerializedName() {
             return name().toLowerCase();
         }
+    }
+
+
+    public boolean isSuffocating(BlockState state, BlockGetter world, BlockPos pos) {
+        return false;
+    }
+
+
+    public boolean isViewBlocking(BlockState state, BlockGetter world, BlockPos pos) {
+        return false;
     }
 }
 

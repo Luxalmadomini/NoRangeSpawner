@@ -14,7 +14,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> NO_RANGE_SPAWNER =
             BLOCKS.register("no_range_spawner",
-                    () -> new NoRangeSpawnerBlock(BlockBehaviour.Properties.of().strength(3.5F)));
+                    () -> new NoRangeSpawnerBlock(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion()));
 
     public static void register(net.minecraftforge.eventbus.api.IEventBus eventBus) {
         BLOCKS.register(eventBus);
